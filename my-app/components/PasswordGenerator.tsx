@@ -15,14 +15,15 @@ export default function PasswordGenerator() {
         uppercase: true,
         lowercase: true,
         digits: true,
-        special1: true,
+        special1: false,
         special2: false,
     })
 
-    const [passwordLength, setPasswordLength] = useState(8)
+    const [passwordLength, setPasswordLength] = useState(6)
     const [passwordCount, setPasswordCount] = useState(5)
     const [passwords, setPasswords] = useState<string[]>([])
     const [strengthResult, setStrengthResult] = useState<{
+        totalAttempts: number;
         alphabetSize: number;
         totalCombinations: number;
         actualProbability: number;
