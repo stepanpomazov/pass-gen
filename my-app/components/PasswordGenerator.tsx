@@ -65,14 +65,18 @@ export default function PasswordGenerator() {
     }
 
     const calculateStrength = (alphabetSize: number, length: number) => {
-        const V = 100;
-        const T_minutes = 10 * 24 * 60;
+        const V = 100; // паролей/день
+        const T_days = 10; // дней
         const P_required = 10 ** -7;
 
-        const totalCombinations = Math.pow(alphabetSize, length);
-        const actualProbability = (V * T_minutes) / totalCombinations;
+        // Общее количество попыток за срок действия
+        const totalAttempts = V * T_days; // 100 × 10 = 1000 попыток
 
-        const minKeySpace = Math.ceil((V * T_minutes) / P_required);
+        const totalCombinations = Math.pow(alphabetSize, length);
+        const actualProbability = totalAttempts / totalCombinations;
+
+        // Минимальный объем пространства ключей по формуле S* = ⌈V·T/P⌉
+        const minKeySpace = Math.ceil(totalAttempts / P_required);
 
         const meetsRequirements = actualProbability <= P_required;
 
@@ -82,7 +86,8 @@ export default function PasswordGenerator() {
             actualProbability,
             requiredProbability: P_required,
             meetsRequirements,
-            minKeySpace
+            minKeySpace,
+            totalAttempts
         };
     }
 
@@ -116,8 +121,11 @@ export default function PasswordGenerator() {
             <div className="max-w-4xl mx-auto px-4">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                        Генератор паролей
+                        Генератор паролей - Вариант 12
                     </h1>
+                    <p className="text-gray-600">
+                        Лабораторная работа по стойкости парольной защиты
+                    </p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -125,11 +133,12 @@ export default function PasswordGenerator() {
                         <h2 className="text-xl font-semibold mb-4">Параметры генерации</h2>
 
                         <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                            <h3 className="font-semibold mb-2">Параметры варианта 12:</h3>
                             <div className="text-sm text-gray-700">
                                 <p>Вероятность подбора (P): 10⁻⁷</p>
-                                <p>Скорость перебора (V): 100 паролей/МИНУТУ</p>
+                                <p>Скорость перебора (V): 100 паролей/день</p>
                                 <p>Срок действия (T): 10 дней</p>
-                                <p>T в минутах: 10 × 24 × 60 = 14,400 минут</p>
+                                <p>Общее число попыток (V×T): <strong>1,000</strong></p>
                             </div>
                         </div>
 
@@ -206,9 +215,10 @@ export default function PasswordGenerator() {
                                     <p>Мощность алфавита: <strong>{strengthResult.alphabetSize}</strong></p>
                                     <p>Длина пароля: <strong>{passwordLength}</strong></p>
                                     <p>Общее количество паролей: <strong>{strengthResult.totalCombinations.toLocaleString()}</strong></p>
+                                    <p>Общее число попыток: <strong>{strengthResult.totalAttempts}</strong></p>
                                     <p>Фактическая вероятность подбора: <strong>{strengthResult.actualProbability.toExponential(2)}</strong></p>
                                     <p>Требуемая вероятность подбора: <strong>{strengthResult.requiredProbability.toExponential(2)}</strong></p>
-                                    <p>Минимальный объем пространства ключей (S): <strong>{strengthResult.minKeySpace.toExponential(2)}</strong></p>
+                                    <p>Минимальный объем пространства ключей: <strong>{strengthResult.minKeySpace.toLocaleString()}</strong></p>
                                     <div className={`mt-2 p-2 rounded ${
                                         strengthResult.meetsRequirements
                                             ? 'bg-green-100 text-green-800'
