@@ -19,7 +19,7 @@ export default function PasswordGenerator() {
         special2: false,
     })
 
-    const [passwordLength, setPasswordLength] = useState(6)
+    const [passwordLength, setPasswordLength] = useState(8)
     const [passwordCount, setPasswordCount] = useState(5)
     const [passwords, setPasswords] = useState<string[]>([])
     const [strengthResult, setStrengthResult] = useState<{
@@ -28,6 +28,7 @@ export default function PasswordGenerator() {
         actualProbability: number;
         requiredProbability: number;
         meetsRequirements: boolean;
+        minKeySpace: number;
     } | null>(null)
 
     const handleOptionChange = (option: keyof AlphabetOptions) => {
@@ -65,11 +66,14 @@ export default function PasswordGenerator() {
 
     const calculateStrength = (alphabetSize: number, length: number) => {
         const V = 100;
-        const T = 10;
+        const T_minutes = 10 * 24 * 60;
         const P_required = 10 ** -7;
 
         const totalCombinations = Math.pow(alphabetSize, length);
-        const actualProbability = (V * T) / totalCombinations;
+        const actualProbability = (V * T_minutes) / totalCombinations;
+
+        const minKeySpace = Math.ceil((V * T_minutes) / P_required);
+
         const meetsRequirements = actualProbability <= P_required;
 
         return {
@@ -77,7 +81,8 @@ export default function PasswordGenerator() {
             totalCombinations,
             actualProbability,
             requiredProbability: P_required,
-            meetsRequirements
+            meetsRequirements,
+            minKeySpace
         };
     }
 
@@ -126,8 +131,9 @@ export default function PasswordGenerator() {
                             <h3 className="font-semibold mb-2">Параметры варианта 12:</h3>
                             <div className="text-sm text-gray-700">
                                 <p>Вероятность подбора (P): 10⁻⁷</p>
-                                <p>Скорость перебора (V): 100 паролей/день</p>
+                                <p>Скорость перебора (V): 100 паролей/МИНУТУ</p>
                                 <p>Срок действия (T): 10 дней</p>
+                                <p>T в минутах: 10 × 24 × 60 = 14,400 минут</p>
                             </div>
                         </div>
 
@@ -164,7 +170,7 @@ export default function PasswordGenerator() {
                                 </label>
                                 <input
                                     type="number"
-                                    min="4"
+                                    min="1"
                                     max="20"
                                     value={passwordLength}
                                     onChange={(e) => setPasswordLength(Number(e.target.value))}
@@ -206,6 +212,7 @@ export default function PasswordGenerator() {
                                     <p>Общее количество паролей: <strong>{strengthResult.totalCombinations.toLocaleString()}</strong></p>
                                     <p>Фактическая вероятность подбора: <strong>{strengthResult.actualProbability.toExponential(2)}</strong></p>
                                     <p>Требуемая вероятность подбора: <strong>{strengthResult.requiredProbability.toExponential(2)}</strong></p>
+                                    <p>Минимальный объем пространства ключей (S): <strong>{strengthResult.minKeySpace.toExponential(2)}</strong></p>
                                     <div className={`mt-2 p-2 rounded ${
                                         strengthResult.meetsRequirements
                                             ? 'bg-green-100 text-green-800'
@@ -221,7 +228,6 @@ export default function PasswordGenerator() {
                             </div>
                         )}
 
-                        {/* Сгенерированные пароли */}
                         {passwords.length > 0 && (
                             <div>
                                 <h3 className="font-semibold mb-3">Сгенерированные пароли:</h3>
