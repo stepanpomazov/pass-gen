@@ -122,7 +122,7 @@ export default function PasswordGenerator() {
             <div className="max-w-4xl mx-auto px-4">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                        Генератор паролей - Вариант 12
+                        Генератор паролей
                     </h1>
                     <p className="text-gray-600">
                         Лабораторная работа по стойкости парольной защиты
@@ -134,7 +134,6 @@ export default function PasswordGenerator() {
                         <h2 className="text-xl font-semibold mb-4">Параметры генерации</h2>
 
                         <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-                            <h3 className="font-semibold mb-2">Параметры варианта 12:</h3>
                             <div className="text-sm text-gray-700">
                                 <p>Вероятность подбора (P): 10⁻⁷</p>
                                 <p>Скорость перебора (V): 100 паролей/день</p>
