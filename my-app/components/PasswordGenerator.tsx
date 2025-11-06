@@ -179,6 +179,7 @@ export default function PasswordGenerator() {
                                     max="20"
                                     value={passwordLength}
                                     onChange={(e) => setPasswordLength(Number(e.target.value))}
+                                    onKeyDown={(e) => e.preventDefault()} // Блокируем ручной ввод
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
